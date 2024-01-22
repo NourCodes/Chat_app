@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:chat_app/services/auth.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -8,6 +9,29 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  bool isLogin = true;
+  final formKey = GlobalKey<FormState>();
+  var email = "";
+  var password = "";
+
+  void submit() {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) {
+      return;
+    }
+    print(email);
+    print(password);
+
+    if (isLogin) {
+      setState(() {
+        formKey.currentState!.save();
+      });
+    } else {
+      Auth auth = Auth();
+      auth.createUser(email, password, context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,26 +56,82 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Form(
+                      key: formKey,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextFormField(
+                            validator: (value) {
+                              if (value == null ||
+                                  value.trim().isEmpty ||
+                                  !value.contains("@")) {
+                                return "Please enter a valid email address";
+                              }
+                              return null;
+                            },
                             decoration: const InputDecoration(
                               labelText: 'Email Address',
                             ),
                             keyboardType: TextInputType.emailAddress,
                             autocorrect: false,
                             textCapitalization: TextCapitalization.none,
+                            onSaved: (newValue) {
+                              email = newValue!;
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                email = value;
+                              });
+                            },
                           ),
                           const SizedBox(
                             height: 10,
                           ),
                           TextFormField(
+                            validator: (value) {
+                              if (value == null || value.trim().length < 6) {
+                                return "Password must be at least 6 character long";
+                              }
+                              return null;
+                            },
                             decoration:
                                 const InputDecoration(labelText: 'Password'),
                             keyboardType: TextInputType.emailAddress,
                             autocorrect: false,
+                            obscureText: true,
                             textCapitalization: TextCapitalization.none,
+                            onSaved: (newValue) {
+                              password = newValue!;
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                password = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                            ),
+                            onPressed: () {
+                              submit();
+                            },
+                            child: Text(isLogin ? "Login" : "Signup"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                isLogin = !isLogin;
+                              });
+                            },
+                            child: Text(isLogin
+                                ? 'Create an account'
+                                : 'I already have an account'),
                           ),
                         ],
                       ),
