@@ -36,7 +36,7 @@ class Auth {
   Future signIn(String email, String password, BuildContext context) async {
     try {
       //sign in the user with the provided email and password
-      final signedUser = await _firebase.signInWithEmailAndPassword(
+      await _firebase.signInWithEmailAndPassword(
           email: email.trim(), password: password.trim());
     } on FirebaseAuthException catch (e) {
       // check if the associated widget is still mounted in the widget tree
@@ -54,4 +54,7 @@ class Auth {
       );
     }
   }
+
+  //returns a stream for tracking changes in authentication state
+  Stream get users => _firebase.authStateChanges();
 }
