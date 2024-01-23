@@ -13,22 +13,19 @@ class _AuthScreenState extends State<AuthScreen> {
   final formKey = GlobalKey<FormState>();
   var email = "";
   var password = "";
+  Auth auth = Auth();
 
-  void submit() {
+  void submit() async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) {
       return;
     }
-    print(email);
-    print(password);
+    formKey.currentState!.save();
 
     if (isLogin) {
-      setState(() {
-        formKey.currentState!.save();
-      });
+      await auth.signIn(email, password, context);
     } else {
-      Auth auth = Auth();
-      auth.createUser(email, password, context);
+      await auth.createUser(email, password, context);
     }
   }
 
