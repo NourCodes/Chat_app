@@ -1,5 +1,6 @@
 import 'package:chat_app/screens/auth.dart';
 import 'package:chat_app/screens/chat.dart';
+import 'package:chat_app/screens/loading_screen.dart';
 import 'package:chat_app/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -21,14 +22,17 @@ class _AuthCheckState extends State<AuthCheck> {
     return StreamBuilder(
       stream: auth.users,
       builder: (context, snapshot) {
-        /// if user is authenticated, navigate to the ChatScreen
+        // if the connection state is waiting, display a loading screen
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingScreen();
+        }
+
+        // if user is authenticated, navigate to the ChatScreen
         if (snapshot.hasData) {
           return const ChatScreen();
         }
         // if the user is not authenticated, navigate to the AuthScreen.
-        else {
-          return const AuthScreen();
-        }
+        return const AuthScreen();
       },
     );
   }
