@@ -57,4 +57,9 @@ class Auth {
 
   //returns a stream for tracking changes in authentication state
   Stream get users => _firebase.authStateChanges();
+
+  //asynchronous function to log out the current user
+  Future logOut() async {
+    return await _firebase.signOut();
+  }
 }
