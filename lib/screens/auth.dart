@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:chat_app/widgets/user_image.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/services/auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -11,21 +14,34 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   bool isLogin = true;
   final formKey = GlobalKey<FormState>();
-  var email = "";
-  var password = "";
+  var _email = "";
+  var _password = "";
+  File? _selectedImage;
   Auth auth = Auth();
 
-  void submit() async {
+  Future submit() async {
     final isValid = formKey.currentState!.validate();
+
     if (!isValid) {
+      // validation failed, show error message
+      Fluttertoast.showToast(
+          msg: "Please Check your Data", gravity: ToastGravity.TOP);
+      return;
+    }
+
+    if (!isLogin && _selectedImage == null) {
+      // image is required for registration, show error message
+      Fluttertoast.showToast(
+          msg: "Please select a profile image for registration",
+          gravity: ToastGravity.TOP);
       return;
     }
     formKey.currentState!.save();
 
     if (isLogin) {
-      await auth.signIn(email, password, context);
+      await auth.signIn(_email, _password, context);
     } else {
-      await auth.createUser(email, password, context);
+      await auth.createUser(_email, _password, context);
     }
   }
 
@@ -57,6 +73,13 @@ class _AuthScreenState extends State<AuthScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          //if we are creating an account display add user image
+                          if (!isLogin)
+                            UserImage(
+                              onPickedImage: (pickedImage) {
+                                _selectedImage = pickedImage;
+                              },
+                            ),
                           TextFormField(
                             validator: (value) {
                               if (value == null ||
@@ -73,11 +96,11 @@ class _AuthScreenState extends State<AuthScreen> {
                             autocorrect: false,
                             textCapitalization: TextCapitalization.none,
                             onSaved: (newValue) {
-                              email = newValue!;
+                              _email = newValue!;
                             },
                             onChanged: (value) {
                               setState(() {
-                                email = value;
+                                _email = value;
                               });
                             },
                           ),
@@ -98,11 +121,11 @@ class _AuthScreenState extends State<AuthScreen> {
                             obscureText: true,
                             textCapitalization: TextCapitalization.none,
                             onSaved: (newValue) {
-                              password = newValue!;
+                              _password = newValue!;
                             },
                             onChanged: (value) {
                               setState(() {
-                                password = value;
+                                _password = value;
                               });
                             },
                           ),

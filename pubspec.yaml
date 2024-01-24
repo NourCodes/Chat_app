@@ -49,6 +49,9 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   firebase_auth:
   firebase_core: ^2.24.2
+  firebase_storage:
+  image_picker:
+  fluttertoast:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
