@@ -41,7 +41,7 @@ class _AuthScreenState extends State<AuthScreen> {
     if (isLogin) {
       await auth.signIn(_email, _password, context);
     } else {
-      await auth.createUser(_email, _password, context);
+      await auth.createUser(_email, _password, context, _selectedImage);
     }
   }
 
