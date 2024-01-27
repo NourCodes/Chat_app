@@ -2,13 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Auth {
   // instance of FirebaseAuth to interact with Firebase authentication
   final _firebase = FirebaseAuth.instance;
   // asynchronous method to create a user with provided email and password
   Future createUser(String email, String password, BuildContext context,
-      File? selectedImage) async {
+      String username, File? selectedImage) async {
     try {
       //create a new user with the provided email and password
       UserCredential result = await _firebase.createUserWithEmailAndPassword(
@@ -27,6 +28,19 @@ class Auth {
 
       await storageRef.putFile(
           selectedImage!); // upload the selected image file to the specified storage location
+
+      // retrieve the download URL for the uploaded image from Firebase Storage
+      final imageUrl = await storageRef.getDownloadURL();
+
+      // access the Firestore instance and add the user information to the "users" collection
+      await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
+        // store the username provided during account creation
+        "username": username,
+        // store the email address associated with the user account
+        "email": email,
+        // store the download URL of the user's profile image in Firestore
+        "imageUrl": imageUrl,
+      });
 
       // return the created user
       return user;

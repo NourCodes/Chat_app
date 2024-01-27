@@ -16,6 +16,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final formKey = GlobalKey<FormState>();
   var _email = "";
   var _password = "";
+  var _username = "";
   File? _selectedImage;
   Auth auth = Auth();
   bool _isAuthenticating = false;
@@ -46,7 +47,8 @@ class _AuthScreenState extends State<AuthScreen> {
     if (isLogin) {
       await auth.signIn(_email, _password, context);
     } else {
-      await auth.createUser(_email, _password, context, _selectedImage);
+      await auth.createUser(
+          _email, _password, context, _username, _selectedImage);
     }
     setState(() {
       _isAuthenticating = false;
@@ -86,6 +88,24 @@ class _AuthScreenState extends State<AuthScreen> {
                             UserImage(
                               onPickedImage: (pickedImage) {
                                 _selectedImage = pickedImage;
+                              },
+                            ),
+                          if (!isLogin)
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                labelText: "Username",
+                              ),
+                              enableSuggestions: false,
+                              onSaved: (newValue) {
+                                _username = newValue!;
+                              },
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.trim().length < 4) {
+                                  return "Please enter at least 4 characters";
+                                }
+                                return null;
                               },
                             ),
                           TextFormField(
