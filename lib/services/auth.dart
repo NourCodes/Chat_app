@@ -112,4 +112,12 @@ class Auth {
       'userImage': userData.data()!["imageUrl"],
     });
   }
+
+// fetches chat messages from Firestore using a stream
+  Stream get chats {
+    return FirebaseFirestore.instance
+        .collection("chat")
+        .orderBy('createdAt', descending: false)
+        .snapshots();
+  }
 }
