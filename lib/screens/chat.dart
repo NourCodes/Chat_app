@@ -1,6 +1,8 @@
 import 'package:chat_app/services/auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:chat_app/widgets/messages.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/chat_messages.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -22,8 +24,11 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text("Logged In"),
+      body: const Column(
+        children: [
+          ChatMessages(),
+          Messages(),
+        ],
       ),
     );
   }

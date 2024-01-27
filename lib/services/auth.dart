@@ -91,4 +91,25 @@ class Auth {
   Future logOut() async {
     return await _firebase.signOut();
   }
+
+  // this function adds a new message to the Firestore database
+  Future<void> addMessages(String message) async {
+    // get the current user from Firebase authentication
+    final user = _firebase.currentUser!;
+
+    // retrieve user data from Firestore based on the current user's ID
+    final userData = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .get();
+
+    // add the new message to the 'chat' collection in Firestore
+    await FirebaseFirestore.instance.collection("chat").add({
+      "text": message,
+      'createdAt': Timestamp.now(),
+      'userId': user.uid,
+      'username': userData.data()!["username"],
+      'userImage': userData.data()!["imageUrl"],
+    });
+  }
 }
