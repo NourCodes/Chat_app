@@ -117,7 +117,11 @@ class Auth {
   Stream get chats {
     return FirebaseFirestore.instance
         .collection("chat")
-        .orderBy('createdAt', descending: false)
+        .orderBy('createdAt', descending: true)
         .snapshots();
+  }
+
+  User? get currentUser {
+    return _firebase.currentUser;
   }
 }
