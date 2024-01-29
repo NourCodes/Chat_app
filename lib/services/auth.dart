@@ -3,8 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Auth {
+  final firebaseMessaging = FirebaseMessaging.instance;
+  void setupNotification() async {
+    // request permission for receiving notifications
+    await firebaseMessaging.requestPermission();
+
+    // get the token for this device
+    final token = await firebaseMessaging.getToken();
+
+    // subscribe to the "chat" topic
+    firebaseMessaging.subscribeToTopic("chat");
+  }
+
   // instance of FirebaseAuth to interact with Firebase authentication
   final _firebase = FirebaseAuth.instance;
   // asynchronous method to create a user with provided email and password
